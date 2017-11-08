@@ -98,7 +98,7 @@ public class DcsResponseBodyEnqueue {
                     enqueueResponseBody(responseBody);
                     iterator.remove();
                 } else {
-                    break;
+                    continue;
                 }
             } else {
                 // Immediately enqueue any directive which does not contain audio content

@@ -71,7 +71,7 @@ public class JLayerDecoderImpl extends BaseDecoder {
             count++;
             bitstream.closeFrame();
             long end = System.currentTimeMillis();
-            Log.i(TAG, "after decode pcm.length:" + pcm.length + "," + (end - start));
+            //Log.i(TAG, "after decode pcm.length:" + pcm.length + "," + (end - start));
         }
         isDecoding = false;
         fireOnDecodeFinished();

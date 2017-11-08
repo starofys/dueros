@@ -5,18 +5,22 @@ import com.baidu.duer.dcs.framework.DcsStream;
 import com.baidu.duer.dcs.systeminterface.IMediaPlayer;
 import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import static com.baidu.duer.dcs.systeminterface.IMediaPlayer.PlayState.PREPARED;
+
 public class SimpleMediaPlayer implements IMediaPlayer {
+    private Logger log= LoggerFactory.getLogger(SimpleMediaPlayer.class);
     boolean mute;
     private boolean active = false;
     private List<IMediaPlayerListener> mediaPlayerListeners;
@@ -34,7 +38,7 @@ public class SimpleMediaPlayer implements IMediaPlayer {
 
     @Override
     public PlayState getPlayState() {
-        return PlayState.STOPPED;
+        return mCurrentState;
     }
 
     private SourceDataLine initAudioTrack(int sampleRate, int channels) {
@@ -58,7 +62,7 @@ public class SimpleMediaPlayer implements IMediaPlayer {
 
     }
     private void prepared() {
-        mCurrentState = PlayState.PREPARED;
+        mCurrentState = PREPARED;
         fireOnPrepared();
         //  一开始就说话让它静音了
         if (mute) {
@@ -120,8 +124,10 @@ public class SimpleMediaPlayer implements IMediaPlayer {
                 } catch (JavaLayerException e) {
                     e.printStackTrace();
                 }
-                m.close();
-                stop();
+                if(mCurrentState == PlayState.PLAYING||mCurrentState==PREPARED){
+                    mCurrentState = IMediaPlayer.PlayState.COMPLETED;
+                    fireOnCompletion();
+                }
             }).start();
         } catch (JavaLayerException e) {
             e.printStackTrace();
@@ -214,23 +220,40 @@ public class SimpleMediaPlayer implements IMediaPlayer {
             } else {
                 mCurrentState = PlayState.COMPLETED;
             }
-            System.out.printf("结束+====================================");
         }
     }
 
 
     @Override
     public void pause() {
+
+
+        log.debug("音乐暂停");
         if (mCurrentState == PlayState.PLAYING
-                || mCurrentState == PlayState.PREPARED
+                || mCurrentState == PREPARED
                 || mCurrentState == PlayState.PREPARING) {
             mCurrentState = PlayState.PAUSED;
 
+
+
+
+
             fireOnPaused();
-            if(player!=null){
-                player.close();
-                player=null;
+            stopMusic();
+        }
+    }
+    private void stopMusic(){
+        if(inStream!=null){
+            try {
+                inStream.close();
+            } catch (IOException e) {
+                e.printStackTrace();
             }
+            inStream=null;
+        }
+        if(player!=null){
+            player.close();
+            player=null;
         }
     }
 
@@ -239,20 +262,19 @@ public class SimpleMediaPlayer implements IMediaPlayer {
 
     @Override
     public void stop() {
+        log.debug("音乐停止");
         getAudioTrackCurrentPosition();
         mCurrentState = PlayState.STOPPED;
         if (writeWorkThread != null) {
             writeWorkThread.stopWrite();
         }
         fireStopped();
-        if(player!=null){
-            player.close();
-            player=null;
-        }
+        stopMusic();
     }
 
     @Override
     public void resume() {
+        log.debug("音乐恢复播放");
         if (mCurrentState == PlayState.PAUSED) {
             mCurrentState = PlayState.PLAYING;
             firePlaying();
@@ -270,10 +292,7 @@ public class SimpleMediaPlayer implements IMediaPlayer {
         if (writeWorkThread != null) {
             writeWorkThread.stopWrite();
         }
-        if(player!=null){
-            player.close();
-            player=null;
-        }
+        stopMusic();
         fireOnRelease();
         mediaPlayerListeners.clear();
     }
