@@ -1,0 +1,31 @@
+# Created by .ignore support plugin (hsz.mobi)
+### STS ###
+.apt_generated
+
+### IntelliJ IDEA ###
+.idea
+*.iws
+*.iml
+*.ipr
+db.db*
+
+### NetBeans ###
+nbproject/private/
+build/
+nbbuild/
+dist/
+nbdist/
+.nb-gradle/
+
+*.idea/inspectionProfiles/
+*.idea/libraries/
+*/target/
+*/target/*
+*.mvn/
+db.db
+db.db.*
+msc/
+static/
+duer.dat
+duer.properties
+duer/DCS/*
