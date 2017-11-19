@@ -43,6 +43,6 @@ public class Log {
     }
 
     public static char[] getStackTraceString(Throwable tr) {
-        return tr.getMessage().toCharArray();
+        return tr!=null&&tr.getMessage()!=null?tr.getMessage().toCharArray():new char[0];
     }
 }

@@ -17,6 +17,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 
+import static com.baidu.duer.dcs.systeminterface.IMediaPlayer.PlayState.PAUSED;
 import static com.baidu.duer.dcs.systeminterface.IMediaPlayer.PlayState.PREPARED;
 
 public class SimpleMediaPlayer implements IMediaPlayer {
@@ -95,6 +96,11 @@ public class SimpleMediaPlayer implements IMediaPlayer {
                 URL murl =new URL(url);
                 inStream = murl.openStream();
                 play(inStream);
+
+
+                log.debug("开始播放音乐"+this+":"+url);
+                mCurrentState = PlayState.PLAYING;
+
             }else{
                 System.out.println("无法播放资源:"+url);
             }
@@ -113,6 +119,7 @@ public class SimpleMediaPlayer implements IMediaPlayer {
 //                e.printStackTrace();
 //            }
 //        }
+
         if(player!=null){
             player.close();
         }
@@ -217,32 +224,34 @@ public class SimpleMediaPlayer implements IMediaPlayer {
             if (mCurrentState == PlayState.PLAYING) {
                 mCurrentState = PlayState.COMPLETED;
                 fireOnCompletion();
-            } else {
-                mCurrentState = PlayState.COMPLETED;
             }
+            mCurrentState = PlayState.COMPLETED;
         }
     }
 
 
     @Override
     public void pause() {
-
-
-        log.debug("音乐暂停");
         if (mCurrentState == PlayState.PLAYING
                 || mCurrentState == PREPARED
                 || mCurrentState == PlayState.PREPARING) {
             mCurrentState = PlayState.PAUSED;
 
-
-
-
-
             fireOnPaused();
             stopMusic();
         }
+        stopMusic();
     }
     private void stopMusic(){
+        if(player!=null){
+            player.close();
+        }
+        if(thread!=null){
+            thread.isStop=true;
+        }
+        if (writeWorkThread != null) {
+            writeWorkThread.stopWrite();
+        }
         if(inStream!=null){
             try {
                 inStream.close();
@@ -251,10 +260,7 @@ public class SimpleMediaPlayer implements IMediaPlayer {
             }
             inStream=null;
         }
-        if(player!=null){
-            player.close();
-            player=null;
-        }
+
     }
 
     private void getAudioTrackCurrentPosition() {
@@ -262,23 +268,30 @@ public class SimpleMediaPlayer implements IMediaPlayer {
 
     @Override
     public void stop() {
-        log.debug("音乐停止");
+        log.debug("音乐停止"+this);
         getAudioTrackCurrentPosition();
         mCurrentState = PlayState.STOPPED;
-        if (writeWorkThread != null) {
-            writeWorkThread.stopWrite();
-        }
-        fireStopped();
         stopMusic();
+        fireStopped();
+
+
     }
 
     @Override
     public void resume() {
-        log.debug("音乐恢复播放");
+        log.debug("音乐恢复播放"+mCurrentState);
         if (mCurrentState == PlayState.PAUSED) {
             mCurrentState = PlayState.PLAYING;
             firePlaying();
+
+            mCurrentState = PlayState.COMPLETED;
+            fireOnCompletion();
         }
+//        if (mCurrentState == PlayState.PLAYING) {
+//
+//        }
+//        mCurrentState = PlayState.COMPLETED;
+
     }
 
     @Override

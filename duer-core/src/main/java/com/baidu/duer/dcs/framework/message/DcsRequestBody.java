@@ -19,6 +19,8 @@ package com.baidu.duer.dcs.framework.message;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 网络请求的消息体
@@ -27,11 +29,31 @@ import java.util.ArrayList;
  */
 @JsonSerialize
 public class DcsRequestBody {
+    public static class Bot{
+        public Bot(String id){
+            this.id=id;
+        }
+        private String id;
+
+        public String getId() {
+            return id;
+        }
+
+        public void setId(String id) {
+            this.id = id;
+        }
+    }
     private ArrayList<ClientContext> clientContext;
     private Event event;
+    private Map<String,Object> debug;
+    private String requestId;
 
     public DcsRequestBody(Event event) {
         this.event = event;
+        debug=new HashMap<>(1);
+        debug.put("bot",new Bot("f0b8d11f-f237-0ec0-7d88-18904b5c0fc0"));
+        debug.put("simulator",true);
+        requestId="wp"+System.currentTimeMillis();
     }
 
     public void setClientContext(ArrayList<ClientContext> clientContexts) {
@@ -48,5 +70,21 @@ public class DcsRequestBody {
 
     public Event getEvent() {
         return event;
+    }
+
+    public Map<String, Object> getDebug() {
+        return debug;
+    }
+
+    public void setDebug(Map<String, Object> debug) {
+        this.debug = debug;
+    }
+
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
     }
 }

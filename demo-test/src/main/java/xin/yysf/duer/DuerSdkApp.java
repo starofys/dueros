@@ -146,6 +146,7 @@ public class DuerSdkApp {
 
     }
     public void shutdown(){
+        factory.shutdown();
         client.dispatcher().cancelAll();
         client.dispatcher().executorService().shutdownNow();
         dcsFramework.release();

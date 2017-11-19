@@ -68,7 +68,7 @@ public class DcsResponseBodyEnqueue {
         for (DcsResponseBody responseBody : incompleteResponseQueue) {
             Directive directive = responseBody.getDirective();
             if (directive == null) {
-                return;
+                continue;
             }
 
             Payload payload = responseBody.getDirective().payload;
@@ -89,6 +89,9 @@ public class DcsResponseBodyEnqueue {
         Iterator<DcsResponseBody> iterator = incompleteResponseQueue.iterator();
         while (iterator.hasNext()) {
             DcsResponseBody responseBody = iterator.next();
+            if(responseBody==null||responseBody.getDirective()==null){
+                continue;
+            }
             Payload payload = responseBody.getDirective().payload;
             if (payload instanceof AttachedContentPayload) {
                 AttachedContentPayload attachedContentPayload = (AttachedContentPayload) payload;

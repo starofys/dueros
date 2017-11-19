@@ -24,6 +24,7 @@ public class SimpleAudioInput implements IAudioInput {
         bRec = true;
 
         new Thread(()->{
+
             AudioFormat af = new AudioFormat(16000, 16, 1, true, false);
             DataLine.Info info = new DataLine.Info(TargetDataLine.class, af);
             DcsStreamRequestBody dcsStreamRequestBody = new DcsStreamRequestBody();

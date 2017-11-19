@@ -4,6 +4,16 @@
 
 java 版本sdk
 ##示例
+###2017年11月20日更新添加技能测试功能
+修改
+```
+com.baidu.duer.dcs.framework.message.DcsRequestBody
+```
+添加,其中参数为技能的id
+```
+debug.put("bot",new Bot("f0b8d11f-f237-0ec0-7d88-18904b5c0fc0"));
+```
+
 在demo-test/src/main/resources/目录下创建duer.properties,输入，并配置好Oauth回调为
 http://127.0.0.1:8080/auth
 ```
@@ -12,7 +22,7 @@ clientSecret=clientSecret
 ```
 然后运行demo-test项目下的
 ```
-java -jar xin.yysf.gui.DuerOSGui
+java xin.yysf.gui.DuerOSGui
 ```
 ![](https://raw.githubusercontent.com/microxdd/dueros/master/duer/STEP1.jpg)
 

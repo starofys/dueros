@@ -58,8 +58,6 @@ public class DuerOSGui extends Application implements IWebView, IAudioInput.IAud
         goButton.setDefaultButton(true);
 
         goButton.setOnAction((ActionEvent event)->{
-            goButton.setDisable(true);
-            stopButton.setDisable(false);
             sdkApp.factory.getVoiceInput().startRecord();
         });
 
@@ -69,8 +67,6 @@ public class DuerOSGui extends Application implements IWebView, IAudioInput.IAud
         goButton.setDefaultButton(true);
         stopButton.setDisable(true);
         stopButton.setOnAction((ActionEvent event)->{
-            goButton.setDisable(false);
-            stopButton.setDisable(true);
             sdkApp.factory.getVoiceInput().stopRecord();
         });
 
@@ -144,7 +140,10 @@ public class DuerOSGui extends Application implements IWebView, IAudioInput.IAud
 
     @Override
     public void onStartRecord(DcsStreamRequestBody dcsStreamRequestBody) {
-        
+        Platform.runLater(()->{
+            goButton.setDisable(true);
+            stopButton.setDisable(false);
+        });
     }
 
     @Override

@@ -3,10 +3,15 @@ package xin.yysf.duer;
 import com.baidu.duer.dcs.systeminterface.*;
 import xin.yysf.gui.DuerOSGui;
 
+import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 public class WindowsPlatformFactory implements IPlatformFactory {
     private SimpleMediaPlayer simpleMediaPlayer=new SimpleMediaPlayer();
     private SimpleAudioInput audioInput=new SimpleAudioInput();
     private IWebView webView;
+    private ExecutorService service= Executors.newFixedThreadPool(2);
     @Override
     public IHandler createHandler() {
         return null;
@@ -17,14 +22,18 @@ public class WindowsPlatformFactory implements IPlatformFactory {
         return new IHandler() {
             @Override
             public boolean post(Runnable runnable) {
-                try {
-                    runnable.run();
-                }catch (Exception e){
-                    e.printStackTrace();
-                }
+                service.execute(runnable);
+//                try {
+//                    runnable.run();
+//                }catch (Exception e){
+//                    e.printStackTrace();
+//                }
                 return true;
             }
         };
+    }
+    public void shutdown(){
+        service.shutdownNow();
     }
 
     @Override
