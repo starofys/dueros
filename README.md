@@ -25,6 +25,10 @@ javafx gui实现
 ```
 java xin.yysf.gui.DuerOSGui
 ```
+使用swt之前，你可能还需要安装它，用来支持浏览器显示
+````
+sudo apt-get install libwebkitgtk-1.0-0
+````
 swt gui实现
 ```
 java xin.yysf.gui.DuerOsSwtGui

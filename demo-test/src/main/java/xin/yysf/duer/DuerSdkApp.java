@@ -2,11 +2,13 @@ package xin.yysf.duer;
 
 import com.baidu.duer.dcs.devicemodule.screen.ScreenDeviceModule;
 import com.baidu.duer.dcs.devicemodule.screen.message.RenderVoiceInputTextPayload;
+import com.baidu.duer.dcs.devicemodule.voiceinput.VoiceInputDeviceModule;
 import com.baidu.duer.dcs.framework.DcsFramework;
 import com.baidu.duer.dcs.framework.DeviceModuleFactory;
 import com.baidu.duer.dcs.http.HttpConfig;
 import com.baidu.duer.dcs.http.intercepter.LoggingInterceptor;
 import com.baidu.duer.dcs.systeminterface.IWebView;
+import com.baidu.duer.dcs.util.LogUtil;
 import com.baidu.duer.dcs.wakeup.WakeUp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
@@ -35,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
 @Controller
-public class DuerSdkApp {
+public class DuerSdkApp implements VoiceInputDeviceModule.IVoiceInputListener{
     private static Logger log= LoggerFactory.getLogger(DuerSdkApp.class);
     public static final long DEFAULT_MILLISECONDS = 60 * 1000L;
     public static String clientId;
@@ -83,6 +85,7 @@ public class DuerSdkApp {
     public static DuerSdkApp sdkApp;
     private IWebView webView;
     private WakeUp wakeUp;
+    private boolean isStopListenReceiving;
 
     public DuerSdkApp(){
         sdkApp=this;
@@ -143,6 +146,9 @@ public class DuerSdkApp {
         fac.createSystemDeviceModule();
         fac.createAudioPlayerDeviceModule();
         fac.createVoiceInputDeviceModule();
+
+        fac.getVoiceInputDeviceModule().addVoiceInputListener(this);
+
         fac.createVoiceOutputDeviceModule();
         if(factory.getWebView()!=null){
             fac.createScreenDeviceModule();
@@ -154,6 +160,15 @@ public class DuerSdkApp {
                 factory.getAudioRecord());
         wakeUp.addWakeUpListener(()->{
             System.out.println("唤醒成功");
+
+            if (isStopListenReceiving) {
+                factory.getVoiceInput().stopRecord();
+                isStopListenReceiving = false;
+                return;
+            }
+            isStopListenReceiving = true;
+            factory.getVoiceInput().startRecord();
+
         });
         // 开始录音，监听是否说了唤醒词
         wakeUp.startWakeUp();
@@ -168,6 +183,10 @@ public class DuerSdkApp {
         }
         if(dcsFramework!=null){
             dcsFramework.release();
+        }
+        if(wakeUp!=null){
+            wakeUp.stopWakeUp();
+            factory.getAudioRecord().stopRecord();
         }
     }
 
@@ -233,5 +252,27 @@ public class DuerSdkApp {
         if(dcsFramework!=null){
             dcsFramework.getDeviceModuleFactory().createScreenDeviceModule();
         }
+    }
+
+    @Override
+    public void onStartRecord() {
+        wakeUp.startWakeUp();
+        isStopListenReceiving = false;
+    }
+
+    @Override
+    public void onFinishRecord() {
+        wakeUp.startWakeUp();
+        isStopListenReceiving = false;
+    }
+
+    @Override
+    public void onSucceed(int statusCode) {
+        log.info("onSucceed-statusCode:{}",statusCode);
+    }
+
+    @Override
+    public void onFailed(String errorMessage) {
+        log.error("onFailed-errorMessage::{}",errorMessage);
     }
 }
