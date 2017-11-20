@@ -9,10 +9,14 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class WindowsPlatformFactory implements IPlatformFactory {
     private SimpleMediaPlayer simpleMediaPlayer=new SimpleMediaPlayer();
-    private SimpleAudioInput audioInput=new SimpleAudioInput();
     private IWebView webView;
     private ExecutorService service= Executors.newFixedThreadPool(2);
+    private AudioRecordThread audioRecordThread;
+    private WakeUpImpl wakeUp;
+    private SimpleAudioInput audioInput;
 
+    public WindowsPlatformFactory(){
+    }
 
     private LinkedBlockingDeque<byte[]> linkedBlockingDeque = new LinkedBlockingDeque<>();
 
@@ -39,16 +43,22 @@ public class WindowsPlatformFactory implements IPlatformFactory {
 
     @Override
     public IAudioRecord getAudioRecord() {
-        return null;
+        if(audioRecordThread==null)
+            audioRecordThread= new AudioRecordThread(linkedBlockingDeque);
+        return audioRecordThread;
     }
 
     @Override
     public IWakeUp getWakeUp() {
-        return new WakeUpImpl(linkedBlockingDeque,handler);
+        if(wakeUp==null)
+            wakeUp=new WakeUpImpl(linkedBlockingDeque,handler);
+        return wakeUp;
     }
 
     @Override
     public IAudioInput getVoiceInput() {
+        if(audioInput==null)
+            audioInput= new SimpleAudioInput(linkedBlockingDeque,handler);
         return audioInput;
     }
 

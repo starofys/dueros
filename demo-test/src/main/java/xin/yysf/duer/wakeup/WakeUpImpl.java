@@ -5,6 +5,7 @@ import com.baidu.duer.dcs.systeminterface.IHandler;
 import com.baidu.duer.dcs.systeminterface.IWakeUp;
 import com.baidu.duer.dcs.util.LogUtil;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
@@ -13,19 +14,34 @@ import java.util.concurrent.LinkedBlockingDeque;
 public class WakeUpImpl implements IWakeUp {
     private static final String TAG = WakeUpImpl.class.getSimpleName();
     private final LinkedBlockingDeque<byte[]> linkedBlockingDeque;
-    private final SnowboyDetect detector;
+    private SnowboyDetect detector;
     private final IHandler handler;
     // Decode消费线程
     private WakeUpDecodeThread wakeUpDecodeThread;
     // callback
     private List<IWakeUpListener> wakeUpListeners;
 
+
     public WakeUpImpl(LinkedBlockingDeque<byte[]> linkedBlockingDeque, IHandler handler){
         this.linkedBlockingDeque=linkedBlockingDeque;
         this.wakeUpListeners = Collections.synchronizedList(new LinkedList<IWakeUpListener>());
         this.handler=handler;
-        detector = new SnowboyDetect("resources/common.res",
-                "resources/jarvis.pmdl");
+
+        try {
+
+            File file=new File("libsnowboy-detect-java.so");
+            if(file.exists()) {
+                System.load(file.getAbsolutePath());
+                detector = new SnowboyDetect("resources/common.res",
+                        "resources/jarvis.pmdl");
+            }
+
+        }catch (Exception e){
+            LogUtil.e(TAG, "唤醒失败");
+            e.printStackTrace();
+        }
+
+
         //this.initWakeUp();
     }
 
@@ -59,15 +75,18 @@ public class WakeUpImpl implements IWakeUp {
             * 开始音频解码进行唤醒操作
      */
     private void wakeUp() {
-        wakeUpDecodeThread = new WakeUpDecodeThread(linkedBlockingDeque, detector, handler);
-        wakeUpDecodeThread.setWakeUpListener(new WakeUpDecodeThread.IWakeUpListener() {
-            @Override
-            public void onWakeUpSucceed() {
-                // 唤醒成功
-                fireOnWakeUpSucceed();
-            }
-        });
-        wakeUpDecodeThread.startWakeUp();
+        if(detector!=null){
+            wakeUpDecodeThread = new WakeUpDecodeThread(linkedBlockingDeque, detector, handler);
+            wakeUpDecodeThread.setWakeUpListener(new WakeUpDecodeThread.IWakeUpListener() {
+                @Override
+                public void onWakeUpSucceed() {
+                    // 唤醒成功
+                    fireOnWakeUpSucceed();
+                }
+            });
+            wakeUpDecodeThread.startWakeUp();
+        }
+
     }
 
     private void fireOnWakeUpSucceed() {

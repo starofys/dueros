@@ -149,34 +149,26 @@ public class DuerSdkApp {
             fac.getScreenDeviceModule().addRenderVoiceInputTextListener(payload -> webView.setText(payload.text));
         }
 
+    // init唤醒
+        wakeUp = new WakeUp(factory.getWakeUp(),
+                factory.getAudioRecord());
+        wakeUp.addWakeUpListener(()->{
+            System.out.println("唤醒成功");
+        });
+        // 开始录音，监听是否说了唤醒词
+        wakeUp.startWakeUp();
 
-
-        try {
-
-
-            File file=new File("libsnowboy-detect-java.so");
-            if(file.exists()) {
-                System.load(file.getAbsolutePath());
-                // init唤醒
-                wakeUp = new WakeUp(factory.getWakeUp(),
-                        factory.getAudioRecord());
-                wakeUp.addWakeUpListener(()->{
-                    System.out.println("唤醒成功");
-                });
-                // 开始录音，监听是否说了唤醒词
-                wakeUp.startWakeUp();
-            }
-
-        }catch (Exception e){
-            log.error("唤醒失败");
-            e.printStackTrace();
-        }
     }
     public void shutdown(){
-        factory.shutdown();
-        client.dispatcher().cancelAll();
-        client.dispatcher().executorService().shutdownNow();
-        dcsFramework.release();
+        if(factory!=null)
+            factory.shutdown();
+        if(client!=null){
+            client.dispatcher().cancelAll();
+            client.dispatcher().executorService().shutdownNow();
+        }
+        if(dcsFramework!=null){
+            dcsFramework.release();
+        }
     }
 
 
