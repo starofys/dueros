@@ -1,9 +1,13 @@
 package xin.yysf.duer;
 
+import com.baidu.duer.dcs.devicemodule.screen.ScreenDeviceModule;
+import com.baidu.duer.dcs.devicemodule.screen.message.RenderVoiceInputTextPayload;
 import com.baidu.duer.dcs.framework.DcsFramework;
 import com.baidu.duer.dcs.framework.DeviceModuleFactory;
 import com.baidu.duer.dcs.http.HttpConfig;
 import com.baidu.duer.dcs.http.intercepter.LoggingInterceptor;
+import com.baidu.duer.dcs.systeminterface.IWebView;
+import com.baidu.duer.dcs.wakeup.WakeUp;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -18,15 +22,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import xin.yysf.duer.po.DuerAuthToken;
-import xin.yysf.gui.DuerOSGui;
 
 import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.file.Files;
 import java.util.Properties;
+import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
 @SpringBootApplication
@@ -77,7 +80,8 @@ public class DuerSdkApp {
     public ObjectMapper objectMapper;
     public DcsFramework dcsFramework;
     public static DuerSdkApp sdkApp;
-    private DuerOSGui webView;
+    private IWebView webView;
+    private WakeUp wakeUp;
 
     public DuerSdkApp(){
         sdkApp=this;
@@ -141,9 +145,31 @@ public class DuerSdkApp {
         fac.createVoiceOutputDeviceModule();
         if(factory.getWebView()!=null){
             fac.createScreenDeviceModule();
+            fac.getScreenDeviceModule().addRenderVoiceInputTextListener(payload -> webView.setText(payload.text));
         }
 
 
+
+        try {
+
+
+            File file=new File("libsnowboy-detect-java.so");
+            if(file.exists()) {
+                System.load(file.getAbsolutePath());
+                // init唤醒
+                wakeUp = new WakeUp(factory.getWakeUp(),
+                        factory.getAudioRecord());
+                wakeUp.addWakeUpListener(()->{
+                    System.out.println("唤醒成功");
+                });
+                // 开始录音，监听是否说了唤醒词
+                wakeUp.startWakeUp();
+            }
+
+        }catch (Exception e){
+            log.error("唤醒失败");
+            e.printStackTrace();
+        }
     }
     public void shutdown(){
         factory.shutdown();
@@ -199,7 +225,7 @@ public class DuerSdkApp {
 //        }
     }
 
-    public void setWebView(DuerOSGui webView) {
+    public void setWebView(IWebView webView) {
         this.webView=webView;
         factory.setWebView(webView);
         if(dcsFramework!=null){

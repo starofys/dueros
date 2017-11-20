@@ -12,6 +12,61 @@
     <artifactId>duer-core</artifactId>
     <packaging>jar</packaging>
 
+
+    <profiles>
+        <profile>
+            <id>windows_amd64</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+                    <version>4.3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <!--<profile>
+            <id>linux_x86_gtk2</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                    <arch>x86</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>org.eclipse.swt.gtk.linux.x86</artifactId>
+                    <version>3.3.0</version>
+                </dependency>
+            </dependencies>
+        </profile>-->
+        <profile>
+            <id>linux_amd64_gtk2</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+                    <version>4.3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
+
+
+
+
     <dependencies>
         <!--<dependency>
             <groupId>org.mortbay.jetty.alpn</groupId>

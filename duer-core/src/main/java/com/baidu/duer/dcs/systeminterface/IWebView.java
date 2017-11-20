@@ -22,9 +22,12 @@ package com.baidu.duer.dcs.systeminterface;
  */
 public interface IWebView {
     void loadUrl(String url);
+    void loadContent(String s);
     void linkClicked(String url);
 
     void addWebViewListener(IWebViewListener listener);
+
+    void setText(String text);
 
     interface IWebViewListener {
         void onLinkClicked(String url);

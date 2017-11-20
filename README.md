@@ -20,9 +20,14 @@ http://127.0.0.1:8080/auth
 clientId=clientId
 clientSecret=clientSecret
 ```
-然后运行demo-test项目下的
+然后运行demo-test项目下
+javafx gui实现
 ```
 java xin.yysf.gui.DuerOSGui
+```
+swt gui实现
+```
+java xin.yysf.gui.DuerOsSwtGui
 ```
 ![](https://raw.githubusercontent.com/microxdd/dueros/master/duer/STEP1.jpg)
 

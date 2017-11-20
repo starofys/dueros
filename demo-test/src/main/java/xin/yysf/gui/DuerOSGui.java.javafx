@@ -41,16 +41,9 @@ public class DuerOSGui extends Application implements IWebView, IAudioInput.IAud
             event.getException().printStackTrace(System.out);
         }));
 
-        //final TextField locationField = new TextField(DEFAULT_URL);
         webEngine.locationProperty().addListener((ObservableValue<? extends String> observable, String oldValue, String newValue) -> {
             //locationField.setText(newValue);
         });
-//        EventHandler<ActionEvent> goAction = (ActionEvent event) -> {
-//            webEngine.load(locationField.getText().startsWith("http://")
-//                    ? locationField.getText()
-//                    : "http://" + locationField.getText());
-//        };
-//        locationField.setOnAction(goAction);
 
         goButton = new Button("录音");
         stopButton = new Button("停止");
@@ -73,12 +66,9 @@ public class DuerOSGui extends Application implements IWebView, IAudioInput.IAud
 
 
 
-//        goButton.setOnAction(goAction);
 
-        // Layout logic
         HBox hBox = new HBox(5);
         hBox.getChildren().setAll(goButton,stopButton);
-//        HBox.setHgrow(locationField, Priority.ALWAYS);
 
         VBox vBox = new VBox(5);
         vBox.getChildren().setAll(hBox, webView);
@@ -103,7 +93,7 @@ public class DuerOSGui extends Application implements IWebView, IAudioInput.IAud
         sdkApp.setWebView(this);
 
         sdkApp.factory.getVoiceInput().registerAudioInputListener(this);
-        
+
         webEngine.loadContent("<h1>HelloDuerOS</h1>");
         if(sdkApp.token==null){
             webEngine.loadContent("Oauth2添加回调<b>http://127.0.0.1:8080/auth</b>然后访问<p>"+sdkApp.url+"</p>");

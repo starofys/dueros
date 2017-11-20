@@ -1,36 +1,37 @@
 package xin.yysf.duer;
 
 import com.baidu.duer.dcs.systeminterface.*;
-import xin.yysf.gui.DuerOSGui;
+import xin.yysf.duer.wakeup.WakeUpImpl;
 
-import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class WindowsPlatformFactory implements IPlatformFactory {
     private SimpleMediaPlayer simpleMediaPlayer=new SimpleMediaPlayer();
     private SimpleAudioInput audioInput=new SimpleAudioInput();
     private IWebView webView;
     private ExecutorService service= Executors.newFixedThreadPool(2);
+
+
+    private LinkedBlockingDeque<byte[]> linkedBlockingDeque = new LinkedBlockingDeque<>();
+
+    private IHandler handler=new IHandler() {
+        @Override
+        public boolean post(Runnable runnable) {
+            service.execute(runnable);
+            return true;
+        }
+    };
+
     @Override
     public IHandler createHandler() {
-        return null;
+        return handler;
     }
 
     @Override
     public IHandler getMainHandler() {
-        return new IHandler() {
-            @Override
-            public boolean post(Runnable runnable) {
-                service.execute(runnable);
-//                try {
-//                    runnable.run();
-//                }catch (Exception e){
-//                    e.printStackTrace();
-//                }
-                return true;
-            }
-        };
+        return handler;
     }
     public void shutdown(){
         service.shutdownNow();
@@ -43,7 +44,7 @@ public class WindowsPlatformFactory implements IPlatformFactory {
 
     @Override
     public IWakeUp getWakeUp() {
-        return null;
+        return new WakeUpImpl(linkedBlockingDeque,handler);
     }
 
     @Override
