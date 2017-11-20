@@ -29,6 +29,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.TimeUnit;
 
@@ -206,7 +207,16 @@ public class DuerSdkApp {
             }
         }
         if(token==null){
-            SpringApplication.run(DuerSdkApp.class);
+            CountDownLatch lock=new CountDownLatch(1);
+            new Thread(()->{
+                SpringApplication.run(DuerSdkApp.class);
+                lock.countDown();
+            }).start();
+            try {
+                lock.await();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }else{
             new DuerSdkApp();
             sdkApp.initDuerOs();

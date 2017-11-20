@@ -48,7 +48,6 @@ public class DuerOsSwtGui implements IWebView, IAudioInput.IAudioInputListener, 
      * Open the window.
      */
     public void open() {
-
         Display display = Display.getDefault();
         createContents();
         shlDuerosgui.open();
