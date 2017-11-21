@@ -26,7 +26,7 @@ import com.baidu.duer.dcs.Log;
  */
 public class LogUtil {
     // 是否开始debug模式，日志输出
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
     private static final String APPNAME = "DCS-";
     private static boolean LOGV_ON = DEBUG;
     private static boolean LOGD_ON = DEBUG;

@@ -175,6 +175,18 @@ public class SimpleMediaPlayer implements IMediaPlayer {
 
         @Override
         public void run() {
+
+            /**
+             * 播放提示音
+             */
+            try {
+                Player player=new Player(this.getClass().getResourceAsStream("/vad_end.mp3"));
+                player.play();
+            } catch (JavaLayerException e) {
+                e.printStackTrace();
+            }
+
+
             SourceDataLine line = initAudioTrack(dcsStream.sampleRate, dcsStream.channels);
             if (line == null) {
                 return;

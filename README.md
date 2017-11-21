@@ -21,6 +21,17 @@ clientId=clientId
 clientSecret=clientSecret
 ```
 然后运行demo-test项目下
+
+你可以直接运行控制台程序
+```
+java xin.yysf.gui.DuerOSGui console
+```
+
+
+
+======================================================
+如果运行gui需要安装相关的gui插件来实现浏览器的展示
+======================================================
 javafx gui实现
 ```
 java xin.yysf.gui.DuerOSGui

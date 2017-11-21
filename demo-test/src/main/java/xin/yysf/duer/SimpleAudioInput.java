@@ -4,6 +4,8 @@ import com.baidu.duer.dcs.framework.message.DcsStreamRequestBody;
 import com.baidu.duer.dcs.systeminterface.IAudioInput;
 import com.baidu.duer.dcs.systeminterface.IHandler;
 import com.baidu.duer.dcs.util.LogUtil;
+import javazoom.jl.decoder.JavaLayerException;
+import javazoom.jl.player.Player;
 import okio.BufferedSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +34,17 @@ public class SimpleAudioInput implements IAudioInput {
     @Override
     public void startRecord() {
         log.info("开始录音");
+
+
+        /**
+         * 播放提示音
+         */
+        try {
+            Player player=new Player(this.getClass().getResourceAsStream("/du.mp3"));
+            player.play();
+        } catch (JavaLayerException e) {
+            e.printStackTrace();
+        }
 
 
         DcsStreamRequestBody dcsStreamRequestBody = new DcsStreamRequestBody();

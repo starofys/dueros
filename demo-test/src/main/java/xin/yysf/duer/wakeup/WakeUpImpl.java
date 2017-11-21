@@ -33,11 +33,20 @@ public class WakeUpImpl implements IWakeUp {
             File file=new File("libsnowboy-detect-java.so");
             if(file.exists()) {
                 System.load(file.getAbsolutePath());
-                detector = new SnowboyDetect("resources/common.res",
-                        "resources/jarvis.pmdl");
-                success=true;
+                File file1=new File("resources/jarvis.pmdl");
+                File file2=new File("resources/common.res");
+                if(file1.exists()&&file2.exists()){
+                    detector = new SnowboyDetect("resources/common.res",
+                            "resources/jarvis.pmdl");
+                    success=true;
+                }else{
+                    System.out.println("唤醒词不存在"+file1.getAbsolutePath());
+                    System.out.println("唤醒词不存在"+file2.getAbsolutePath());
+                }
+
+
             }else{
-                LogUtil.e(TAG, "唤醒失败,动态库不存在"+file.getAbsolutePath());
+                System.out.println("唤醒开启失败,动态库不存在"+file.getAbsolutePath());
             }
 
         }catch (Exception e){

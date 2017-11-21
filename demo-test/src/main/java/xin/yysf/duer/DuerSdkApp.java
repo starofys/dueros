@@ -26,10 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import xin.yysf.duer.po.DuerAuthToken;
 
 import javax.annotation.PostConstruct;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.util.Properties;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
@@ -43,9 +40,25 @@ public class DuerSdkApp implements VoiceInputDeviceModule.IVoiceInputListener{
     public static String clientId;
     public static String clientSecret;
     static {
-        Properties properties=new Properties();
-        InputStream in=DuerSdkApp.class.getResourceAsStream("/duer.properties");
+
+        File file=new File("duer.properties");
+        InputStream in=null;
+        if(file.exists()){
+            try {
+                in=new FileInputStream(file);
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+            }
+            log.info("读取配置文件duer.properties：{}",file.getAbsolutePath());
+        }else{
+            log.warn("没有找到配置文件duer.properties：{}",file.getAbsolutePath());
+        }
+        if(in==null){
+            log.info("从classpath读取");
+            in=DuerSdkApp.class.getResourceAsStream("/duer.properties");
+        }
         if(in!=null){
+            Properties properties=new Properties();
             try {
                 properties.load(DuerSdkApp.class.getResourceAsStream("/duer.properties"));
                 clientId=properties.getProperty("clientId");
@@ -160,7 +173,6 @@ public class DuerSdkApp implements VoiceInputDeviceModule.IVoiceInputListener{
                 factory.getAudioRecord());
         wakeUp.addWakeUpListener(()->{
             System.out.println("唤醒成功");
-
             if (isStopListenReceiving) {
                 factory.getVoiceInput().stopRecord();
                 isStopListenReceiving = false;
