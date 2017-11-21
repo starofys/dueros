@@ -42,13 +42,8 @@ public class DuerOsSwtGui implements IWebView, IAudioInput.IAudioInputListener, 
      * Launch the application.
      * @param args
      */
-    public static void main(String[] args) {
-        if(args.length!=0){
-            if("console".equals(args[0])){
-                DuerOsCmd.main1(args);
-                return;
-            }
-        }
+    public static void main1(String[] args) {
+
 
         try {
             DuerOsSwtGui window = new DuerOsSwtGui();

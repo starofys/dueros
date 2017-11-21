@@ -15,7 +15,15 @@ public class DuerOsCmd implements IWebView, IAudioInput.IAudioInputListener {
     private DuerSdkApp sdkApp;
     private boolean record;
     private boolean recordimg;
-    public static void main1(String[] args) {
+    public static void main(String[] args) {
+
+        if(args.length!=0){
+            if("gui".equals(args[0])){
+                DuerOsSwtGui.main1(args);
+                return;
+            }
+        }
+
         DuerOsCmd duerOsCmd=new DuerOsCmd();
         duerOsCmd.initDuerOs();
 
