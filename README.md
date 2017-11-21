@@ -33,6 +33,23 @@ swt gui实现
 ```
 java xin.yysf.gui.DuerOsSwtGui
 ```
+树莓派环境下运行gui,需要配置swt运行环境
+````
+sudo apt-get install libwebkitgtk-1.0-0
+apt-get install libswt-webkit-gtk-4-jni 
+sudo apt-get install libswt-gtk-4-jni
+sudo apt-get install libswt-gtk-4-java
+
+mvn package
+cd demo-test/target
+mkdir BOOT-INF
+mkdir lib
+cp ../../lib/swt-gtk-4.3.2-arm.jar ./BOOT-INF/lib/.
+jar -uf0 demo-test-1.0-SNAPSHOT.jar ./BOOT-INF/lib/swt-gtk-4.3.2-arm.jar
+java -jar demo-test-1.0-SNAPSHOT.jar
+````
+
+
 ![](https://raw.githubusercontent.com/microxdd/dueros/master/duer/STEP1.jpg)
 
 播放音乐示例

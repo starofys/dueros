@@ -203,6 +203,7 @@ public class DcsClient {
             @Override
             public void onResponse(Response response, int id) {
                 super.onResponse(response, id);
+
                 LogUtil.d(TAG, "onResponse OK ," + response.request().url());
                 LogUtil.d(TAG, "onResponse code ," + response.code());
                 if (responseListener != null) {

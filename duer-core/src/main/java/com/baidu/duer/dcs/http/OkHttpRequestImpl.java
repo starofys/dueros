@@ -45,6 +45,8 @@ public class OkHttpRequestImpl implements HttpRequestInterface {
     @Override
     public void doPostEventStringAsync(DcsRequestBody requestBody, DcsCallback dcsCallback) {
         String bodyJson = ObjectMapperUtil.instance().objectToJson(requestBody);
+        System.out.println(bodyJson);
+
         Map<String, RequestBody> multiParts = new LinkedHashMap<>();
         multiParts.put(HttpConfig.Parameters.DATA_METADATA,
                 RequestBody.create(OkHttpMediaType.MEDIA_JSON_TYPE, bodyJson));

@@ -11,6 +11,58 @@
     <packaging>jar</packaging>
     <artifactId>demo-test</artifactId>
 
+    <profiles>
+        <profile>
+            <id>windows_amd64</id>
+            <activation>
+                <os>
+                    <family>Windows</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>org.eclipse.swt.win32.win32.x86_64</artifactId>
+                    <version>4.3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>linux_arm_gtk4</id>
+            <activation>
+                <os>
+                    <family>unix</family>
+                    <arch>arm</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>org.eclipse.swt.gtk.linux.arm</artifactId>
+                    <version>4.3.2</version>
+                    <scope>system</scope>
+                    <systemPath>${project.basedir}/../lib/swt-gtk-4.3.2-arm.jar</systemPath>
+                </dependency>
+            </dependencies>
+        </profile>
+        <profile>
+            <id>linux_amd64_gtk4</id>
+            <activation>
+                <os>
+                    <family>linux</family>
+                    <arch>amd64</arch>
+                </os>
+            </activation>
+            <dependencies>
+                <dependency>
+                    <groupId>org.eclipse.swt</groupId>
+                    <artifactId>org.eclipse.swt.gtk.linux.x86_64</artifactId>
+                    <version>4.3</version>
+                </dependency>
+            </dependencies>
+        </profile>
+    </profiles>
     <dependencies>
         <dependency>
             <groupId>xin.yysf</groupId>
@@ -21,6 +73,7 @@
             <groupId>org.mortbay.jetty.alpn</groupId>
             <artifactId>alpn-boot</artifactId>
             <version>8.1.11.v20170118</version>
+            <scope>test</scope>
         </dependency>
 
         <dependency>
@@ -33,4 +86,19 @@
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>

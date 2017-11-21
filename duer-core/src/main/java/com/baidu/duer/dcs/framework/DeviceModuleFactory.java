@@ -76,6 +76,9 @@ public class DeviceModuleFactory {
                         MediaChannel.SPEAK.priority);
     }
 
+    public IDeviceModuleHandler getDeviceModuleHandler() {
+        return deviceModuleHandler;
+    }
 
     public void createVoiceInputDeviceModule() {
         /*

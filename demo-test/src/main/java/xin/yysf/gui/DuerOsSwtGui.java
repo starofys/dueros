@@ -1,6 +1,13 @@
 package xin.yysf.gui;
 
+import com.baidu.duer.dcs.devicemodule.voiceinput.ApiConstants;
+import com.baidu.duer.dcs.devicemodule.voiceinput.message.ListenStartedPayload;
+import com.baidu.duer.dcs.framework.DeviceModuleFactory;
+import com.baidu.duer.dcs.framework.IResponseListener;
 import com.baidu.duer.dcs.framework.message.DcsStreamRequestBody;
+import com.baidu.duer.dcs.framework.message.DialogRequestIdHeader;
+import com.baidu.duer.dcs.framework.message.Event;
+import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.systeminterface.IAudioInput;
 import com.baidu.duer.dcs.systeminterface.IWebView;
 import org.eclipse.swt.SWT;
@@ -12,6 +19,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
 import xin.yysf.duer.DuerSdkApp;
+import xin.yysf.duer.textInput.TextInputPayload;
 
 public class DuerOsSwtGui implements IWebView, IAudioInput.IAudioInputListener, SelectionListener {
 
@@ -175,6 +183,28 @@ public class DuerOsSwtGui implements IWebView, IAudioInput.IAudioInputListener, 
             msg.setText("提示");
             msg.setMessage("未实现");
             msg.open();
+
+            DeviceModuleFactory.IDeviceModuleHandler handler = sdkApp.dcsFramework.getDeviceModuleFactory().getDeviceModuleHandler();
+
+
+            String dialogRequestId = handler.getDialogRequestIdHandler().createActiveDialogRequestId();
+            DialogRequestIdHeader requestBody = new DialogRequestIdHeader("ai.dueros.device_interface.text_input", "TextInput", dialogRequestId);
+            Payload payload = new TextInputPayload("你好");
+            com.baidu.duer.dcs.framework.message.Event event = new Event(requestBody, payload);
+
+            handler.getMessageSender().sendEvent(event, new IResponseListener() {
+                @Override
+                public void onSucceed(int statusCode) {
+                    System.out.println("statusCode"+statusCode);
+                }
+
+                @Override
+                public void onFailed(String errorMessage) {
+                    System.out.println(errorMessage);
+                }
+            });
+
+
         }
     }
 
