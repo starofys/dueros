@@ -17,7 +17,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.LinkedBlockingDeque;
 
-import static com.baidu.duer.dcs.systeminterface.IMediaPlayer.PlayState.PAUSED;
 import static com.baidu.duer.dcs.systeminterface.IMediaPlayer.PlayState.PREPARED;
 
 public class SimpleMediaPlayer implements IMediaPlayer {
@@ -53,8 +52,23 @@ public class SimpleMediaPlayer implements IMediaPlayer {
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, af);
         SourceDataLine line = null;
         try {
+            /**
+             * 尝试获取默认声卡
+             */
+            Mixer.Info[] arrMixerInfo = AudioSystem.getMixerInfo();
+            if(arrMixerInfo!=null&&arrMixerInfo.length>0){
+                //Mixer.Info ainfo = arrMixerInfo[0];
+                Mixer mixer = AudioSystem.getMixer(arrMixerInfo[0]);
+                Line finfo = mixer.getLine(info);
+                if(finfo instanceof SourceDataLine){
+                    SourceDataLine sinfo = (SourceDataLine) finfo;
+                    sinfo.open(af,2000);
+                    return sinfo;
+                }
+            }
+
             line = (SourceDataLine) AudioSystem.getLine(info);
-            line.open(af, 1152);
+            line.open(af, 2000);
             return line;
         } catch (LineUnavailableException e) {
             e.printStackTrace();
