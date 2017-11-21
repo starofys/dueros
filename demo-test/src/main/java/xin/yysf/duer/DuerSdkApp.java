@@ -60,7 +60,7 @@ public class DuerSdkApp implements VoiceInputDeviceModule.IVoiceInputListener{
         if(in!=null){
             Properties properties=new Properties();
             try {
-                properties.load(DuerSdkApp.class.getResourceAsStream("/duer.properties"));
+                properties.load(in);
                 clientId=properties.getProperty("clientId");
                 clientSecret=properties.getProperty("clientSecret");
             } catch (IOException e) {
