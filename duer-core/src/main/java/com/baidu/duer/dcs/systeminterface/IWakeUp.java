@@ -22,6 +22,13 @@ package com.baidu.duer.dcs.systeminterface;
  * Created by guxiuzhong@baidu.com on 2017/6/25.
  */
 public interface IWakeUp {
+
+    /**
+     * 是否成功启动唤醒
+     * @return
+     */
+    boolean isSuccess();
+
     /**
      * 开始唤醒
      * 1.初始化唤醒词

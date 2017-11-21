@@ -1,27 +1,33 @@
 package xin.yysf.duer;
 
+import com.baidu.duer.dcs.framework.message.DcsStreamRequestBody;
+import com.baidu.duer.dcs.systeminterface.IAudioInput;
 import com.baidu.duer.dcs.systeminterface.IAudioRecord;
+import com.baidu.duer.dcs.systeminterface.IWakeUp;
 import com.baidu.duer.dcs.util.LogUtil;
 
 import javax.sound.sampled.*;
 import java.util.concurrent.LinkedBlockingDeque;
 
-public class AudioRecordThread extends Thread implements IAudioRecord {
+public class AudioRecordThread extends Thread implements IAudioRecord, IAudioInput.IAudioInputListener {
 
     private static final String TAG = AudioRecordThread.class.getSimpleName();
     // 采样率
     private static final int SAMPLE_RATE_HZ = 16000;
     private final TargetDataLine audioRecord;
     private final AudioFormat af;
+    private final IWakeUp iWakeUp;
     private int bufferSize=3200;
     private volatile boolean isStartRecord = false;
     private LinkedBlockingDeque<byte[]> linkedBlockingDeque;
-    public AudioRecordThread(LinkedBlockingDeque<byte[]> linkedBlockingDeque) {
+    private boolean bStart=false;
+    public AudioRecordThread(LinkedBlockingDeque<byte[]> linkedBlockingDeque, IWakeUp iWakeUp) {
         this.linkedBlockingDeque = linkedBlockingDeque;
 
         af = new AudioFormat(16000, 16, 1, true, false);
 
         DataLine.Info info = new DataLine.Info(TargetDataLine.class, af);
+        this.iWakeUp=iWakeUp;
 
         try {
             audioRecord = (TargetDataLine) AudioSystem.getLine(info);
@@ -35,7 +41,7 @@ public class AudioRecordThread extends Thread implements IAudioRecord {
         if (isStartRecord) {
             return;
         }
-        isStartRecord = true;
+        isStartRecord=true;
         this.start();
     }
 
@@ -43,6 +49,8 @@ public class AudioRecordThread extends Thread implements IAudioRecord {
     public void stopRecord() {
         isStartRecord = false;
     }
+
+
 
     @Override
     public void run() {
@@ -53,6 +61,18 @@ public class AudioRecordThread extends Thread implements IAudioRecord {
             audioRecord.start();
             byte[] buffer = new byte[bufferSize];
             while (isStartRecord) {
+                if(!iWakeUp.isSuccess()){
+                    if(!bStart){
+                        synchronized (af){
+                            try {
+                                af.wait();
+                            } catch (InterruptedException e) {
+                                e.printStackTrace();
+                                return;
+                            }
+                        }
+                    }
+                }
                 int readBytes = audioRecord.read(buffer, 0, bufferSize);
                 if (readBytes > 0) {
                     linkedBlockingDeque.add(buffer);
@@ -68,5 +88,18 @@ public class AudioRecordThread extends Thread implements IAudioRecord {
             audioRecord.close();
         }
 
+    }
+
+    @Override
+    public void onStartRecord(DcsStreamRequestBody dcsStreamRequestBody) {
+        bStart=true;
+        synchronized (af){
+            af.notify();
+        }
+    }
+
+    @Override
+    public void onStopRecord() {
+        bStart=false;
     }
 }

@@ -43,8 +43,12 @@ public class WindowsPlatformFactory implements IPlatformFactory {
 
     @Override
     public IAudioRecord getAudioRecord() {
-        if(audioRecordThread==null)
-            audioRecordThread= new AudioRecordThread(linkedBlockingDeque);
+        if(audioRecordThread==null){
+            audioRecordThread= new AudioRecordThread(linkedBlockingDeque,getWakeUp());
+            IAudioInput voiceInput = getVoiceInput();
+            voiceInput.registerAudioInputListener(audioRecordThread);
+        }
+
         return audioRecordThread;
     }
 

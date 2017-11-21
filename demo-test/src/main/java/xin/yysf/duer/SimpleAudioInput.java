@@ -42,12 +42,9 @@ public class SimpleAudioInput implements IAudioInput {
                 linkedBlockingDeque,
                 dcsStreamRequestBody.sink(),
                 handler);
-        audioVoiceInputThread.setAudioInputListener(new AudioVoiceInputThread.IAudioInputListener() {
-            @Override
-            public void onWriteFinished() {
-                for (IAudioInputListener listener : listeners) {
-                    listener.onStopRecord();
-                }
+        audioVoiceInputThread.setAudioInputListener(() -> {
+            for (IAudioInputListener listener : listeners) {
+                listener.onStopRecord();
             }
         });
         audioVoiceInputThread.startWriteStream();
@@ -147,7 +144,6 @@ public class SimpleAudioInput implements IAudioInput {
 
         @Override
         public void run() {
-            super.run();
             while (isStart) {
                 try {
                     byte[] recordAudioData = linkedBlockingDeque.pollFirst();

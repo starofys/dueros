@@ -42,8 +42,10 @@ public class WakeUp {
                 fireOnWakeUpSucceed();
             }
         });
+
         // 启动音频采集
         this.iAudioRecord.startRecord();
+
     }
 
     private void fireOnWakeUpSucceed() {

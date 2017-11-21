@@ -20,6 +20,7 @@ public class WakeUpImpl implements IWakeUp {
     private WakeUpDecodeThread wakeUpDecodeThread;
     // callback
     private List<IWakeUpListener> wakeUpListeners;
+    private boolean success;
 
 
     public WakeUpImpl(LinkedBlockingDeque<byte[]> linkedBlockingDeque, IHandler handler){
@@ -34,6 +35,7 @@ public class WakeUpImpl implements IWakeUp {
                 System.load(file.getAbsolutePath());
                 detector = new SnowboyDetect("resources/common.res",
                         "resources/jarvis.pmdl");
+                success=true;
             }
 
         }catch (Exception e){
@@ -43,6 +45,11 @@ public class WakeUpImpl implements IWakeUp {
 
 
         //this.initWakeUp();
+    }
+
+    @Override
+    public boolean isSuccess() {
+        return success;
     }
 
     @Override
