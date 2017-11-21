@@ -39,6 +39,10 @@ public class WindowsPlatformFactory implements IPlatformFactory {
     }
     public void shutdown(){
         service.shutdownNow();
+        if(audioRecordThread!=null){
+            audioRecordThread.stopRecord();
+            audioRecordThread.interrupt();
+        }
     }
 
     @Override

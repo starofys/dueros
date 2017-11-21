@@ -42,4 +42,6 @@ java9 以下的jdk如要启用http2需要在添加vm参数
 ```
 -Xbootclasspath/p:${settings.localRepository}/org/mortbay/jetty/alpn/alpn-boot/${alpn-boot.version}/alpn-boot-${alpn-boot.version}.jar.
 ```
-
+```
+-Xbootclasspath/p:/G:/maven/repository/org/mortbay/jetty/alpn/alpn-boot/8.1.11.v20170118/alpn-boot-8.1.11.v20170118.jar
+```
