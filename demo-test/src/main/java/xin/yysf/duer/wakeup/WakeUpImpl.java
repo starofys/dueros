@@ -36,6 +36,8 @@ public class WakeUpImpl implements IWakeUp {
                 detector = new SnowboyDetect("resources/common.res",
                         "resources/jarvis.pmdl");
                 success=true;
+            }else{
+                LogUtil.e(TAG, "唤醒失败,动态库不存在"+file.getAbsolutePath());
             }
 
         }catch (Exception e){
