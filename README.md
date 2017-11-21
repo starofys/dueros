@@ -24,7 +24,7 @@ clientSecret=clientSecret
 
 你可以直接运行控制台程序
 ```
-java xin.yysf.gui.DuerOSGui console
+java xin.yysf.gui.DuerOsCmd
 ```
 
 
@@ -34,7 +34,7 @@ java xin.yysf.gui.DuerOSGui console
 ======================================================
 javafx gui实现
 ```
-java xin.yysf.gui.DuerOSGui
+java xin.yysf.gui.DuerOsCmd gui
 ```
 使用swt之前，你可能还需要安装它，用来支持浏览器显示
 ````
@@ -57,7 +57,7 @@ mkdir BOOT-INF
 mkdir lib
 cp ../../lib/swt-gtk-4.3.2-arm.jar ./BOOT-INF/lib/.
 jar -uf0 demo-test-1.0-SNAPSHOT.jar ./BOOT-INF/lib/swt-gtk-4.3.2-arm.jar
-java -jar demo-test-1.0-SNAPSHOT.jar
+java -jar demo-test-1.0-SNAPSHOT.jar gui
 ````
 
 
