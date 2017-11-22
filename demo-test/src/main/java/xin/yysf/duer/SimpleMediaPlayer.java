@@ -49,7 +49,7 @@ public class SimpleMediaPlayer implements IMediaPlayer {
         if (channels <= 0) {
             channels = 1;
         }
-        AudioFormat af = new AudioFormat(sampleRate, 16, 1, true, false);
+        AudioFormat af = new AudioFormat(sampleRate, 16, channels, true, false);
         DataLine.Info info = new DataLine.Info(SourceDataLine.class, af);
         SourceDataLine line = null;
         try {
@@ -132,7 +132,7 @@ public class SimpleMediaPlayer implements IMediaPlayer {
             player.close();
         }
         try {
-            Player m=player=new Player(in);
+            Player m=player=new Player(in,new JavaDefaultSoundAudioDevice());
             new Thread(() -> {
                 try {
                     m.play();
