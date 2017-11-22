@@ -9,6 +9,7 @@ import javazoom.jl.player.Player;
 import okio.BufferedSink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xin.yysf.duer.audio.JavaDefaultSoundAudioDevice;
 
 import javax.sound.sampled.AudioFormat;
 import javax.sound.sampled.AudioSystem;
@@ -40,11 +41,13 @@ public class SimpleAudioInput implements IAudioInput {
          * 播放提示音
          */
         try {
-            Player player=new Player(this.getClass().getResourceAsStream("/du.mp3"));
+            Player player=new Player(this.getClass().getResourceAsStream("/du.mp3"),new JavaDefaultSoundAudioDevice());
             player.play();
         } catch (JavaLayerException e) {
             e.printStackTrace();
         }
+
+        linkedBlockingDeque.clear();
 
 
         DcsStreamRequestBody dcsStreamRequestBody = new DcsStreamRequestBody();

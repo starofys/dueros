@@ -7,6 +7,7 @@ import javazoom.jl.decoder.JavaLayerException;
 import javazoom.jl.player.Player;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import xin.yysf.duer.audio.JavaDefaultSoundAudioDevice;
 
 import javax.sound.sampled.*;
 import java.io.IOException;
@@ -55,18 +56,11 @@ public class SimpleMediaPlayer implements IMediaPlayer {
             /**
              * 尝试获取默认声卡
              */
-            Mixer.Info[] arrMixerInfo = AudioSystem.getMixerInfo();
-            if(arrMixerInfo!=null&&arrMixerInfo.length>0){
-                //Mixer.Info ainfo = arrMixerInfo[0];
-                Mixer mixer = AudioSystem.getMixer(arrMixerInfo[0]);
-                Line finfo = mixer.getLine(info);
-                if(finfo instanceof SourceDataLine){
-                    SourceDataLine sinfo = (SourceDataLine) finfo;
-                    sinfo.open(af,2000);
-                    return sinfo;
-                }
+            line=JavaDefaultSoundAudioDevice.createSourceDataLine(info);
+            if(line!=null){
+                line.open(af, 2000);
+                return line;
             }
-
             line = (SourceDataLine) AudioSystem.getLine(info);
             line.open(af, 2000);
             return line;
@@ -194,7 +188,8 @@ public class SimpleMediaPlayer implements IMediaPlayer {
              * 播放提示音
              */
             try {
-                Player player=new Player(this.getClass().getResourceAsStream("/vad_end.mp3"));
+                Player player=new Player(
+                        this.getClass().getResourceAsStream("/vad_end.mp3"),new JavaDefaultSoundAudioDevice());
                 player.play();
             } catch (JavaLayerException e) {
                 e.printStackTrace();
