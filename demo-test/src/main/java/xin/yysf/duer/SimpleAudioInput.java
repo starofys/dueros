@@ -37,6 +37,14 @@ public class SimpleAudioInput implements IAudioInput {
         log.info("开始录音");
 
 
+
+
+
+        DcsStreamRequestBody dcsStreamRequestBody = new DcsStreamRequestBody();
+        for (IAudioInputListener listener : listeners) {
+            listener.onStartRecord(dcsStreamRequestBody);
+        }
+
         /**
          * 播放提示音
          */
@@ -49,11 +57,6 @@ public class SimpleAudioInput implements IAudioInput {
 
         linkedBlockingDeque.clear();
 
-
-        DcsStreamRequestBody dcsStreamRequestBody = new DcsStreamRequestBody();
-        for (IAudioInputListener listener : listeners) {
-            listener.onStartRecord(dcsStreamRequestBody);
-        }
         audioVoiceInputThread = new AudioVoiceInputThread(
                 linkedBlockingDeque,
                 dcsStreamRequestBody.sink(),
