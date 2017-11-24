@@ -18,12 +18,10 @@ package com.baidu.duer.dcs;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.math.BigInteger;
+import java.net.*;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
-import java.util.UUID;
+import java.util.*;
 
 import java.io.Closeable;
 import java.io.IOException;
@@ -205,6 +203,48 @@ public class CommonUtil {
 //            serial = "Dueros000";
 //        }
 //        return new UUID(devIDShort.hashCode(), serial.hashCode()).toString();
-        return "aaaaaaaaaaaaavvvvv";
+
+        String mac=findMAC();
+        if(mac==null){
+            System.err.println("获取getDeviceUniqueID 失败");
+            mac=UUID.randomUUID().toString();
+        }
+
+        return mac;
+    }
+    public static String findMAC(){
+        String[] cardNames={"eth0","eth1","wlan0","wlan1","wlan2"};
+        for (String cardName : cardNames) {
+            NetworkInterface card=findNetworkInterface(cardName);
+            if(card!=null){
+                try {
+                    byte[] addr = card.getHardwareAddress();
+                    if(addr!=null){
+                        String mac=new BigInteger(addr).toString(16);
+                        if(mac.length()==11){
+                            mac="0"+mac;
+                        }
+                        return mac;
+                    }
+                } catch (SocketException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+        return null;
+    }
+    public static NetworkInterface findNetworkInterface(String name){
+        try {
+            Enumeration<NetworkInterface> cards = NetworkInterface.getNetworkInterfaces();
+            while (cards.hasMoreElements()){
+                NetworkInterface card = cards.nextElement();
+                if(name.equals(card.getName())){
+                    return card;
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
