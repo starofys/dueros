@@ -223,7 +223,7 @@ public class DuerSdkApp implements VoiceInputDeviceModule.IVoiceInputListener{
                 }
             }
             if(token!=null){
-                if(System.currentTimeMillis()-token.time>3600*1000*28){
+                if(System.currentTimeMillis()-token.time> 3600*1000*28*24L){
                     log.warn("token过期");
                     token=null;
                 }

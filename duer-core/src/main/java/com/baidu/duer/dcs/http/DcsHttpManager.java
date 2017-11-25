@@ -116,6 +116,7 @@ public class DcsHttpManager {
                     if (!finalDCSCallback.validateResponse(response, id)) {
                         IOException exception = new IOException("request failed , response's code is : "
                                 + response.code());
+                        System.out.println(response.body().string());
                         sendFailResultCallback(call, exception, finalDCSCallback, id);
                         return;
                     }

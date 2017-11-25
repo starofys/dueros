@@ -207,7 +207,7 @@ public class CommonUtil {
         String mac=findMAC();
         if(mac==null){
             System.err.println("获取getDeviceUniqueID 失败");
-            mac=UUID.randomUUID().toString();
+            mac="1111111";
         }
 
         return mac;
@@ -217,19 +217,41 @@ public class CommonUtil {
         for (String cardName : cardNames) {
             NetworkInterface card=findNetworkInterface(cardName);
             if(card!=null){
-                try {
-                    byte[] addr = card.getHardwareAddress();
-                    if(addr!=null){
-                        String mac=new BigInteger(addr).toString(16);
-                        if(mac.length()==11){
-                            mac="0"+mac;
-                        }
-                        return mac;
-                    }
-                } catch (SocketException e) {
-                    e.printStackTrace();
+                String mac = readMac(card);
+                if(mac!=null){
+                    return mac;
                 }
             }
+        }
+
+
+        try {
+            Enumeration<NetworkInterface> cards = NetworkInterface.getNetworkInterfaces();
+            while (cards.hasMoreElements()){
+                String mac=readMac(cards.nextElement());
+                if(mac!=null){
+                    return mac;
+                }
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
+        }
+
+
+        return null;
+    }
+    private static String readMac(NetworkInterface card){
+        try {
+            byte[] addr = card.getHardwareAddress();
+            if(addr!=null){
+                String mac=new BigInteger(addr).toString(16);
+                if(mac.length()==11){
+                    mac="0"+mac;
+                }
+                return mac;
+            }
+        } catch (SocketException e) {
+            e.printStackTrace();
         }
         return null;
     }
