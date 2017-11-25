@@ -48,6 +48,7 @@ public class DuerOsCmd implements IWebView, IAudioInput.IAudioInputListener {
                 continue;
             }
             if(record){
+                record=false;
                 sdkApp.factory.getVoiceInput().stopRecord();
             }else{
                 sdkApp.factory.getVoiceInput().startRecord();

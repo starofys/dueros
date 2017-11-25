@@ -268,7 +268,7 @@ public class DuerSdkApp implements VoiceInputDeviceModule.IVoiceInputListener{
 
     @Override
     public void onStartRecord() {
-        wakeUp.startWakeUp();
+        wakeUp.stopWakeUp();
         isStopListenReceiving = false;
     }
 
