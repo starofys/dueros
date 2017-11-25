@@ -39,6 +39,8 @@ public class WakeUpImpl implements IWakeUp {
                     detector = new SnowboyDetect("resources/common.res",
                             "resources/jarvis.pmdl");
                     success=true;
+                    detector.SetSensitivity("0.5");
+                    detector.SetAudioGain(1);
                 }else{
                     System.out.println("唤醒词不存在"+file1.getAbsolutePath());
                     System.out.println("唤醒词不存在"+file2.getAbsolutePath());
