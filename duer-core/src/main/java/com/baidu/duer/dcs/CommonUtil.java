@@ -39,6 +39,7 @@ import java.util.UUID;
  */
 public class CommonUtil {
     private static final int JSON_INDENT = 4;
+    public static String deviceId;
 
     public static String getCurrentTime() {
         SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss",
@@ -204,13 +205,17 @@ public class CommonUtil {
 //        }
 //        return new UUID(devIDShort.hashCode(), serial.hashCode()).toString();
 
-        String mac=findMAC();
-        if(mac==null){
-            System.err.println("获取getDeviceUniqueID 失败");
-            mac="1111111";
+        if(deviceId==null){
+            String mac=findMAC();
+            if(mac==null){
+                System.err.println("获取getDeviceUniqueID 失败");
+                mac="1111111";
+            }
+            deviceId=mac;
         }
 
-        return mac;
+
+        return deviceId;
     }
     public static String findMAC(){
         String[] cardNames={"eth0","eth1","wlan0","wlan1","wlan2"};

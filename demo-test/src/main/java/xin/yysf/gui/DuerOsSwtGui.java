@@ -10,6 +10,7 @@ import com.baidu.duer.dcs.framework.message.Event;
 import com.baidu.duer.dcs.framework.message.Payload;
 import com.baidu.duer.dcs.systeminterface.IAudioInput;
 import com.baidu.duer.dcs.systeminterface.IWebView;
+import org.apache.commons.lang3.StringUtils;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.browser.Browser;
 import org.eclipse.swt.events.SelectionEvent;
@@ -19,6 +20,7 @@ import org.eclipse.swt.layout.FormData;
 import org.eclipse.swt.layout.FormLayout;
 import org.eclipse.swt.widgets.*;
 import xin.yysf.duer.DuerSdkApp;
+import xin.yysf.duer.textInput.TextInputPayload;
 
 public class DuerOsSwtGui implements IWebView, IAudioInput.IAudioInputListener, SelectionListener {
 
@@ -180,30 +182,33 @@ public class DuerOsSwtGui implements IWebView, IAudioInput.IAudioInputListener, 
         }else if(selectionEvent.getSource()==stopBtn){
             sdkApp.factory.getVoiceInput().stopRecord();
         }else if(selectionEvent.getSource()==sentTxtBtn){
-            MessageBox msg=new MessageBox(Display.getCurrent().getActiveShell());
-            msg.setText("提示");
-            msg.setMessage("未实现");
-            msg.open();
+            if(StringUtils.isEmpty(text.getText())){
+                MessageBox msg=new MessageBox(Display.getCurrent().getActiveShell());
+                msg.setText("提示");
+                msg.setMessage("消息空");
+                msg.open();
+                return;
+            }
 
-//            DeviceModuleFactory.IDeviceModuleHandler handler = sdkApp.dcsFramework.getDeviceModuleFactory().getDeviceModuleHandler();
-//
-//
-//            String dialogRequestId = handler.getDialogRequestIdHandler().createActiveDialogRequestId();
-//            DialogRequestIdHeader requestBody = new DialogRequestIdHeader("ai.dueros.device_interface.text_input", "TextInput", dialogRequestId);
-//            Payload payload = new TextInputPayload("你好");
-//            com.baidu.duer.dcs.framework.message.Event event = new Event(requestBody, payload);
-//
-//            handler.getMessageSender().sendEvent(event, new IResponseListener() {
-//                @Override
-//                public void onSucceed(int statusCode) {
-//                    System.out.println("statusCode"+statusCode);
-//                }
-//
-//                @Override
-//                public void onFailed(String errorMessage) {
-//                    System.out.println(errorMessage);
-//                }
-//            });
+
+            DeviceModuleFactory.IDeviceModuleHandler handler = sdkApp.dcsFramework.getDeviceModuleFactory().getDeviceModuleHandler();
+
+            String dialogRequestId = handler.getDialogRequestIdHandler().createActiveDialogRequestId();
+            DialogRequestIdHeader requestBody = new DialogRequestIdHeader("ai.dueros.device_interface.text_input", "TextInput", dialogRequestId);
+            Payload payload = new TextInputPayload(text.getText());
+            com.baidu.duer.dcs.framework.message.Event event = new Event(requestBody, payload);
+
+            handler.getMessageSender().sendEvent(event, new IResponseListener() {
+                @Override
+                public void onSucceed(int statusCode) {
+                    System.out.println("statusCode"+statusCode);
+                }
+
+                @Override
+                public void onFailed(String errorMessage) {
+                    System.out.println(errorMessage);
+                }
+            });
 
 
         }

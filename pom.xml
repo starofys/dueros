@@ -10,6 +10,7 @@
     <modules>
         <module>duer-core</module>
         <module>demo-test</module>
+        <module>duer-bot</module>
     </modules>
     <packaging>pom</packaging>
     <properties>

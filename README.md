@@ -3,6 +3,21 @@
 [![DuerOS](http://duer.bdstatic.com/saiya/dueros_static_79c1cb0828ef81e9863d87b7c5a154c2/statics/images//dumi/logo2.png)](http://duer.bdstatic.com)
 
 java 版本sdk
+
+
+===================
+添加百度技能基本的sdk  (不包含回复卡片等高级信息)
+duer-bot
+===================
+运行 xin.yysf.app.DuerOsBotDemo
+
+
+
+
+
+
+
+
 ##示例
 ##2017年11月20日更新添加技能测试功能
 1.修改位于com.baidu.duer.dcs.framework.message.DcsRequestBody的类

@@ -75,7 +75,7 @@ public class HttpConfig {
     public static class HttpHeaders {
         public static final String CONTENT_TYPE = "Content-Type";
         public static final String DUEROS_DEVICE_ID = "dueros-device-id";
-        public static final String AUTHORIZATION = "Authorization";
+        public static final String AUTHORIZATION = "authorization";
         public static final String CONTENT_ID = "Content-ID";
         public static final String BEARER = "Bearer ";
         public static final String DEBUG = "debug";
@@ -119,8 +119,8 @@ public class HttpConfig {
                 HttpConfig.ContentTypes.FORM_MULTIPART);
         headers.put(HttpConfig.HttpHeaders.DUEROS_DEVICE_ID,
                 CommonUtil.getDeviceUniqueID());
-        headers.put(HttpConfig.HttpHeaders.DEBUG,
-                HttpConfig.HttpHeaders.DEBUG_PARAM);
+//        headers.put(HttpConfig.HttpHeaders.DEBUG,
+//                HttpConfig.HttpHeaders.DEBUG_PARAM);
         // headers.put(HttpHeaders.DEBUG_BOSS, "nj03-rp-m22nlp156.nj03.baidu.com:8486");
         String logId = UUID.randomUUID().toString();
         Log.d("time", "logid："+logId);
