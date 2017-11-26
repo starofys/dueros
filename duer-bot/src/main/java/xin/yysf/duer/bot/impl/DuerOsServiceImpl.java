@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import xin.yysf.duer.bot.entity.cus.IntentDesc;
 import xin.yysf.duer.bot.entity.cus.SlotDesc;
 import xin.yysf.duer.bot.entity.proto.DuerRequest;
@@ -44,33 +45,6 @@ public class DuerOsServiceImpl implements DuerOsService{
 
     @Autowired
     private ApplicationContext applicationContext;
-
-    @PostConstruct
-    public void init(){
-
-
-        /**
-         * 定义槽
-         */
-        List<SlotDesc> slots=new ArrayList<>();
-        slots.add(new SlotDesc("device_name",true,"什么设备？"));
-        slots.add(new SlotDesc("switch_control",true,"打开还是关闭"));
-        slots.add(new SlotDesc("home_loc",true,"哪里的？"));
-        IntentDesc desc=new IntentDesc("switch_control",slots);
-
-
-        intents.put(desc.getName(),desc);
-
-
-        /**
-         * 定义处理类
-         */
-        SwitchControlIntentHandler handler=new SwitchControlIntentHandler();
-        intentHandlerMap.put("switch_control",handler);
-
-
-
-    }
     @Override
     public DuerResponse processRequest(DuerRequest request) {
 
@@ -170,5 +144,18 @@ public class DuerOsServiceImpl implements DuerOsService{
             msgBuilder.textMessage("不清楚要做什么").shouldEndSession(true);
         }
         return msgBuilder.build();
+    }
+
+    @Override
+    public void addIntentHandler(IntentDesc intentDesc, IntentHandler handler) {
+
+        if(StringUtils.isEmpty(intentDesc.getName())){
+            log.warn("意图名为空：{}",intentDesc);
+            return;
+        }
+
+        intents.put(intentDesc.getName(),intentDesc);
+        intentHandlerMap.put(intentDesc.getName(),handler);
+
     }
 }

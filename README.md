@@ -11,8 +11,7 @@ duer-bot
 ===================
 运行 xin.yysf.app.DuerOsBotDemo
 
-
-
+更详细的说明 [技能开发之“智能设备开关”](https://developer.dueros.baidu.com/didp/forum/topic/show?topicId=246395 "智能设备开关")
 
 
 

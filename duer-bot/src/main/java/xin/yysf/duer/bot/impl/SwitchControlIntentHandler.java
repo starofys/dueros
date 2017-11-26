@@ -25,6 +25,11 @@ public class SwitchControlIntentHandler implements IntentHandler {
 
         msgBuilder.textMessage("意图识别完成：设备名："+deviceName.value+",位置:"+homeLoc.value+",动作："+s.value);
 
+
+
+        //根据userId调用mqtt等相关制定完成后续的开发工作
+
+
         return true;
     }
 }

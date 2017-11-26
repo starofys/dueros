@@ -1,6 +1,7 @@
 package xin.yysf.duer.bot;
 
 
+import xin.yysf.duer.bot.entity.cus.IntentDesc;
 import xin.yysf.duer.bot.entity.proto.DuerRequest;
 import xin.yysf.duer.bot.entity.proto.DuerResponse;
 
@@ -11,4 +12,5 @@ public interface DuerOsService {
      * @return
      */
     DuerResponse processRequest(DuerRequest request);
+    void addIntentHandler(IntentDesc intentDesc,IntentHandler handler);
 }
