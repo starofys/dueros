@@ -12,5 +12,11 @@ public interface DuerOsService {
      * @return
      */
     DuerResponse processRequest(DuerRequest request);
+
+    /**
+     * 添加意图处理类
+     * @param intentDesc
+     * @param handler  实现类可以自动实现依赖注入。
+     */
     void addIntentHandler(IntentDesc intentDesc,IntentHandler handler);
 }

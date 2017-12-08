@@ -1,5 +1,6 @@
 package xin.yysf.duer.bot.entity.proto;
 
+import javax.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -113,14 +114,28 @@ public class DuerResponse extends DuerProto{
             Builder builder=new Builder();
             DuerResponse response=builder.rs=new DuerResponse();
             response.response=new ResponseType();
-            response.version="2.0";
+            response.version=request.version;
 
             //自定义Session 百度会原样返回
             Session session=response.session=new Session();
-            Map<String, String> attr = session.attributes = new HashMap<>(5);
-            attr.put("aaa","bbb");
             return builder;
         }
+
+        /**
+         * 设置Session值
+         * @param key
+         * @param value
+         * @return
+         */
+        public Builder addSessionAttribute(String key,String value){
+            Map<String, String> sess = rs.session.attributes;
+            if(sess==null){
+                sess=rs.session.attributes=new HashMap<>(5);
+            }
+            sess.put(key,value);
+            return this;
+        }
+
 
         /**
          * 返回要说出的话
@@ -132,7 +147,7 @@ public class DuerResponse extends DuerProto{
             out.text=message;
             out.type="PlainText";
 
-            rs.response.reprompt=out;
+            //rs.response.reprompt=out;
             return this;
         }
 

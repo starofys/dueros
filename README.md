@@ -5,20 +5,20 @@
 java 版本sdk
 
 
-===================
-添加百度技能基本的sdk  (不包含回复卡片等高级信息)
-duer-bot
-===================
+
+### 添加百度技能基本的sdk  (不包含回复卡片等高级信息)
+## duer-bot
 运行 xin.yysf.app.DuerOsBotDemo
 
-更详细的说明 [技能开发之“智能设备开关”](https://developer.dueros.baidu.com/didp/forum/topic/show?topicId=246395 "智能设备开关")
+更详细的说明 
+###### [技能开发之“智能设备开关”](https://developer.dueros.baidu.com/didp/forum/topic/show?topicId=246395 "智能设备开关")
+###### [演示说明2017.12.8](https://dueros.baidu.com/didp/forum/topic/show?topicId=247649 "演示说明2017.12.8")
 
 
 
 
-
-##示例
-##2017年11月20日更新添加技能测试功能
+## 示例
+## 2017年11月20日更新添加技能测试功能
 1.修改位于com.baidu.duer.dcs.framework.message.DcsRequestBody的类
 ```
 com.baidu.duer.dcs.framework.message.DcsRequestBody
@@ -27,7 +27,7 @@ com.baidu.duer.dcs.framework.message.DcsRequestBody
 ```
 debug.put("bot",new Bot("f0b8d11f-f237-0ec0-7d88-18904b5c0fc0"));
 ```
-##使用
+## 使用
 在demo-test/src/main/resources/目录下创建duer.properties,输入，并配置好Oauth回调为
 http://127.0.0.1:8080/auth
 ```
@@ -43,9 +43,7 @@ java xin.yysf.gui.DuerOsCmd
 
 
 
-======================================================
-如果运行gui需要安装相关的gui插件来实现浏览器的展示
-======================================================
+## 如果运行gui需要安装相关的gui插件来实现浏览器的展示
 javafx gui实现
 ```
 java xin.yysf.gui.DuerOsCmd gui

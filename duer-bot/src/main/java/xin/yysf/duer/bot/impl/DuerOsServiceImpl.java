@@ -3,9 +3,11 @@ package xin.yysf.duer.bot.impl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
+import xin.yysf.duer.bot.DuerContext;
+import xin.yysf.duer.bot.DuerSession;
 import xin.yysf.duer.bot.entity.cus.IntentDesc;
 import xin.yysf.duer.bot.entity.cus.SlotDesc;
 import xin.yysf.duer.bot.entity.proto.DuerRequest;
@@ -14,8 +16,6 @@ import xin.yysf.duer.bot.entity.proto.Slot;
 import xin.yysf.duer.bot.DuerOsService;
 import xin.yysf.duer.bot.IntentHandler;
 
-import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,9 +40,10 @@ public class DuerOsServiceImpl implements DuerOsService{
 
 
 
+    private Map<Long,DuerSession> duerSessionMap=new HashMap<>();
 
-
-
+    @Autowired
+    private AutowireCapableBeanFactory autowireBean;
     @Autowired
     private ApplicationContext applicationContext;
     @Override
@@ -72,6 +73,21 @@ public class DuerOsServiceImpl implements DuerOsService{
              */
             long userId = request.context.path("System").path("user").path("userId").asLong();
 
+
+            if(userId==0){
+                msgBuilder.textMessage("请求有误");
+                return msgBuilder.build();
+            }
+
+            DuerSession session = duerSessionMap.get(userId);
+            if(session==null||System.currentTimeMillis()-session.getCreationTime()>30*3600L){
+                session=new DefaultDuerSession(String.valueOf(userId));
+                duerSessionMap.put(userId,session);
+            }else{
+                session.refreshTime();
+            }
+            DuerContext context=new DuerContext(request,msgBuilder,session);
+
             DuerRequest.IntentRequest intentRequest=(DuerRequest.IntentRequest)duerReq;
 
             for (DuerRequest.Intent intent : intentRequest.intents) {
@@ -82,29 +98,28 @@ public class DuerOsServiceImpl implements DuerOsService{
                             ,stringSlotEntry.getKey(),slot.name,slot.value,slot.values,slot.confirmationStatus);
                 }
                 IntentDesc desc = intents.get(intent.name);
+
                 if (desc != null) {
                     log.debug("[dueros] 开始处理意图:{}", intent.name);
                     List<SlotDesc> slotDescs = desc.getSlots();
-                    if (slotDescs != null) {
+                    if (slotDescs != null&&!slotDescs.isEmpty()) {
                         boolean bComp = true;
                         for (SlotDesc slotDesc : slotDescs) {
-
-
-
-                            DuerResponse.DirectiveBuilder directiveBuilder = DuerResponse.DirectiveBuilder.newBuilder()
-                                    .updatedIntent(intent);
-
 
                             if (slotDesc.isRequired()) {
                                 Slot slot = intent.slots.get(slotDesc.getName());
                                 if (slot == null) {
-
-                                    //向用户询问未知的槽值
-//                                    directiveBuilder.toElicitSlot(slotDesc.getName());
-//                                    msgBuilder.textMessage(slotDesc.getMsg());
-
-                                    //或者直接交给百度自己处理
-                                    directiveBuilder.toDelegate();
+                                    DuerResponse.DirectiveBuilder directiveBuilder = DuerResponse.DirectiveBuilder.newBuilder()
+                                            .updatedIntent(intent);
+                                    String msg=slotDesc.getMsg();
+                                    if(msg==null){
+                                        //或者直接交给百度自己处理
+                                        directiveBuilder.toDelegate();
+                                    }else{
+                                        //向用户询问未知的槽值
+                                        directiveBuilder.toElicitSlot(slotDesc.getName());
+                                        msgBuilder.textMessage(slotDesc.getMsg());
+                                    }
                                     msgBuilder.addDirective(directiveBuilder.build());
                                     bComp = false;
                                     break;
@@ -114,12 +129,18 @@ public class DuerOsServiceImpl implements DuerOsService{
                         IntentHandler handler = intentHandlerMap.get(intent.name);
                         if(handler!=null){
                             if(bComp){
-                                msgBuilder.shouldEndSession(handler.handleIntent(request, msgBuilder, intent));
+                                msgBuilder.shouldEndSession(handler.handleIntent(context,intent));
                             }
                         }else{
                             msgBuilder.shouldEndSession(true).textMessage("我靠，还没有实现该意图！");
                         }
 
+                    }else{
+                        //如果意图空
+                        IntentHandler handler = intentHandlerMap.get(intent.name);
+                        if(handler!=null){
+                            msgBuilder.shouldEndSession(handler.handleIntent(context,intent));
+                        }
                     }
 
                 } else {
@@ -153,7 +174,10 @@ public class DuerOsServiceImpl implements DuerOsService{
             log.warn("意图名为空：{}",intentDesc);
             return;
         }
-
+        /**
+         * 自动装配
+         */
+        autowireBean.autowireBean(handler);
         intents.put(intentDesc.getName(),intentDesc);
         intentHandlerMap.put(intentDesc.getName(),handler);
 

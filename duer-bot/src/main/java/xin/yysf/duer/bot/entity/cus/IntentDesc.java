@@ -12,6 +12,9 @@ public class IntentDesc {
     public IntentDesc(){
 
     }
+    public IntentDesc(String name){
+        this.name=name;
+    }
 
     public IntentDesc(String name, List<SlotDesc> slots) {
         this.name = name;
